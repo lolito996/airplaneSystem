@@ -5,10 +5,10 @@ public class Main {
 
 
     private Scanner reader ;
-    private Controller controller;
+    private AirPlaneSystem controller;
     public Main(){
         this.reader = new Scanner(System.in);
-        this.controller=new Controller();
+        this.controller=new AirPlaneSystem();
 
     }
     public static void main(String[] args) {
@@ -33,9 +33,9 @@ public class Main {
         return
                 "\n" +
                         "<< --------------------------------------------------------------------- >>\n" +
-                        "<<                      jugo de las serpientes y escaleras                \n"+
+                        "<<                      Airplane System                                  >> \n"+
                         "<< --------------------------------------------------------------------- >>\n"+
-                        "1. Jugar\n"+
+                        "1. Importar archivo \n"+
                         "0. Exit";
     }
 
@@ -45,8 +45,10 @@ public class Main {
         switch(option){
 
             case 1:
-
+                controller.uploadDataPassenger();
                 break;
+            case 2:
+        
 
             case 0:
                 System.out.print("Exit program");

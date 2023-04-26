@@ -11,8 +11,8 @@ package  model;
             return top == null;
         }
 
-        public void push(T element) {
-            Node<T> newNode = new Node<>(element);
+        public void push(T element,K key) {
+            Node<T> newNode = new Node<>(element,key);
             newNode.setNext(top);
             top = newNode;
         }

@@ -3,13 +3,14 @@ package model;
 public class Passenger {
     private String name;
     private String id ;
-
     private  int  age;
+    private int seat ;
 
-    public Passenger(String name, String id, int age) {
+    public Passenger(String name, String id, int age,int seat) {
         this.name = name;
         this.id = id;
         this.age = age;
+        this.seat=seat;
     }
     public String getName() {
         return name;
@@ -35,4 +36,22 @@ public class Passenger {
         this.age = age;
     }
 
+    public int getSeat() {
+        return this.seat;
+    }
+
+    public void setSeat(int seat) {
+        this.seat = seat;
+    }
+    
+    @Override
+    public String toString() {
+        return " Pasajero " +
+                "nombre='" + this.name + '\'' +
+                " Id=" + this.id +
+                ", numeroAsiento=" + this.seat;
+    }
 }
+
+
+

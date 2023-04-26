@@ -1,37 +1,34 @@
 package model;
-public class Node<T> {
-
+public class Node<T,H> {
     private T e;
-    private Node previous;
-    private Node next;
+    private H hash;
+    private Node<T,H> next;
 
-    public Node(T e) {
-        this.e = e;
+    public Node(T aid, H hash){
+        e = aid;
+        this.hash = hash;
+        this.next = null;
     }
-
-    public Node getPrevious() {
-        return previous;
-    }
-
-    public void setPrevious(Node previous) {
-        this.previous = previous;
-    }
-
-    public Node getNext() {
-        return next;
-    }
-
-    public void setNext(Node next) {
-        this.next = next;
-    }
-
-    public T getElement() {
+    public T getElement(){
         return e;
     }
-
-    public void setElement(T e) {
-        this.e = e;
+    public Node<T,H> getNext() {
+        return next;
     }
-
+    public void setNext(Node<T,H> next) {
+        this.next = next;
+    }
+    public void add(Node<T,H> e){
+        e.setNext(this);
+    }
+    public int size(){
+        Node<T,H> current = this;
+       int cont = 1;
+       while(current.getNext()!=null){
+           cont++;
+           current = current.getNext();
+       }
+       return cont;
+    }
 
 }

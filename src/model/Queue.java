@@ -1,17 +1,16 @@
-package  model;
-public class Queue<T>{
-    private T e;
-    private Node <T> tail;
-    private Node <T> head;
+package model;
 
-    public Queue(){
-        tail=null;
-        head=null;
+public class Queue<T,K> {
+    private Node<T,K> tail;
+    private Node<T,K> head;
+
+    public Queue() {
+        tail = null;
+        head = null;
     }
 
-
-    public void enqueue(T element) {
-        Node<T> node = new Node<>(element);
+    public void enqueue(T element,K key) {
+        Node<T,K> node = new Node<>(element,key);
         if (head == null) {
             head = node;
             tail = node;
@@ -21,14 +20,13 @@ public class Queue<T>{
         }
     }
 
-
     public T dequeue() {
-        if(isEmpty()){
+        if (isEmpty()) {
             throw new RuntimeException("Queue is Empty");
-        }else{
-            Node node = head;
+        } else {
+            Node<T,K> node = head;
             head = head.getNext();
-            return (T)node.getElement();
+            return node.getElement();
         }
     }
 
