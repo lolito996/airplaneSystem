@@ -172,6 +172,7 @@ public class AirPlaneSystem {
     public String disboardOrder(){
         HNode<String,Integer> node = new HNode<>("",-1);
         StringBuilder msj = new StringBuilder();
+        msj.append("\nOrden de Salida de los Pasajeros :\n");
         int cont = 0;
         boolean flag = true;
         for(int i=0;i<seats.size();i++){

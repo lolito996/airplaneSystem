@@ -61,6 +61,7 @@ public class Main {
                 break;
             case 4:
                 print(disboardPlane());
+                endProgram();
                 break;
             case 5:
                 print("\nV : VIP seat  ||");
@@ -100,6 +101,10 @@ public class Main {
                 print("invalid option");
         }
 
+    }
+    private void endProgram(){
+        print("\n El Vuelo ha llegado a su destino"+"\n\nGracias Por usar nuestro Confiable Programa");
+        System.exit(0);
     }
     private String passengerValidation(){
         int pos = controller.passengerComes();
