@@ -8,15 +8,45 @@ import java.util.Random;
 
 public class AirPlaneSystem {
     private File result;
+    private PlaneState state;
     private HashTable<Passenger,String> hash;
     private ArrayList<Passenger> passengers;
+    private ArrayList<Passenger> listTemp;
+    private Queue<Passenger,String> normalQueue;
+    private Queue<Passenger,String> firstClassQueue;
+    private ArrayList<Seat> normalSeats;
+    private ArrayList<Seat> firstClassSeats;
 
     public AirPlaneSystem(){
         passengers = new ArrayList<>();
+        listTemp = new ArrayList<>();
+        state = PlaneState.WAITING;
+        normalQueue = new Queue<>();
+        firstClassQueue = new Queue<>();
+        normalSeats = new ArrayList<>();
+        firstClassSeats = new ArrayList<>();
         createDataFile();
         uploadDataPassenger();
+        System.out.println(passengers.get(10).getName());
         passengerHashLoad();
+        setSeatList();
+
     }
+    public ArrayList<Passenger> getPassengers(){
+        return passengers;
+    }
+    public ArrayList<Passenger> getListTemp(){
+        listTemp = passengers;
+       return listTemp;
+    }
+    public void setPlaneState(){
+        if(state.equals(PlaneState.WAITING)){
+            state = PlaneState.LANDED;
+        }else{
+            state = PlaneState.WAITING;
+        }
+    }
+    public PlaneState getPlaneState(){return state;}
     private void createDataFile(){
         File projectDir = new File(System.getProperty("user.dir"));
         File dataDirectory = new File(projectDir.getAbsolutePath() + "/data");
@@ -29,7 +59,7 @@ public class AirPlaneSystem {
         try{
             FileInputStream fis = new FileInputStream(result);
             BufferedReader reader = new BufferedReader(new InputStreamReader(fis));
-            String line = " ";
+            String line = "";
             StringBuilder msj = new StringBuilder();
             while((line = reader.readLine())!=null){
                 msj.append(line);
@@ -39,8 +69,10 @@ public class AirPlaneSystem {
             Passenger[] array = gson.fromJson(msj.toString(),Passenger[].class);
             for(Passenger p:array){
                 passengers.add(p);
+                p.setPassengerClass(PassengerClass.NORMAL_CLASS);
             }
         }catch(Exception ex){
+            ex.printStackTrace();
             //Ya que creamos el archivo antes, nunca va a pasar que no lo encuentra;
         }
     }
@@ -52,22 +84,60 @@ public class AirPlaneSystem {
         }
         return msj.toString();
     }
+    private void setSeatList(){
+        //lista de asientos de clase económica
+        for(int i=19;i<=54;i++){
+            normalSeats.add(new Seat(i,false));
+        }
+        //lista de asientos de primera Clase
+        for(int i=1;i<=18;i++){
+            firstClassSeats.add(new Seat(i,false));
+        }
+    }
     private void passengerHashLoad(){
         hash = new HashTable<>();
         for(int i=0;i<passengers.size();i++){
             hash.add(passengers.get(i),passengers.get(i).getId());
         }
     }
-    public Passenger passengerComes(){
+    public int passengerComes(){
+        if(passengers.size()==0){
+            return -1;
+        }
         int pos = (int)Math.floor(Math.random()*passengers.size()); //Selecciona un pasajero aleatorio
-        Passenger passenger = passengers.get(pos);
-        return passenger;
+        return pos;
     }
-    public boolean validatePassenger(Passenger passenger){
+    public boolean validatePassenger(Passenger passenger,int pos){
         if(hash.search(passenger.getId())!=null){
+            passengers.remove(pos);
+            orderPassenger(passenger);
+            setPassengerSeat(passenger,pos);
             return true;
         }else{
             return false;
+        }
+
+    }
+    private void setPassengerSeat(Passenger passenger,int pos){
+        if(passenger.getClass().equals(PassengerClass.FIRST_CLASS)){
+            int seatPos = (int)Math.floor(Math.random()*(firstClassSeats.size()));
+            Seat seat = firstClassSeats.get(seatPos);
+            firstClassSeats.remove(seatPos);
+            passengers.get(pos).setSeat(seat);
+        }else if(passenger.getPassengerClass().equals(PassengerClass.NORMAL_CLASS)){
+            int seatPos = (int)Math.floor(Math.random()*(normalSeats.size()));
+            Seat seat = normalSeats.get(seatPos);
+            normalSeats.remove(seatPos);
+            passengers.get(pos).setSeat(seat);
+        }
+    }
+    private void orderPassenger(Passenger passenger){
+        if(passenger.getClass().equals(PassengerClass.FIRST_CLASS)){
+            firstClassQueue.enqueue(passenger,passenger.getId());
+        }else if(passenger.getPassengerClass().equals(PassengerClass.NORMAL_CLASS)){
+            normalQueue.enqueue(passenger,passenger.getId());
+        }else{
+
         }
     }
     //Este metodo se eliminara para el prototipo final
