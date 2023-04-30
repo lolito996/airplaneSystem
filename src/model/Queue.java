@@ -1,8 +1,8 @@
 package model;
 
 public class Queue<T,K> {
-    private Node<T,K> tail;
-    private Node<T,K> head;
+    private HNode<T,K> tail;
+    private HNode<T,K> head;
 
     public Queue() {
         tail = null;
@@ -10,7 +10,7 @@ public class Queue<T,K> {
     }
 
     public void enqueue(T element,K key) {
-        Node<T,K> node = new Node<>(element,key);
+        HNode<T,K> node = new HNode<>(element,key);
         if (head == null) {
             head = node;
             tail = node;
@@ -24,7 +24,7 @@ public class Queue<T,K> {
         if (isEmpty()) {
             throw new RuntimeException("Queue is Empty");
         } else {
-            Node<T,K> node = head;
+            HNode<T,K> node = head;
             head = head.getNext();
             return node.getElement();
         }

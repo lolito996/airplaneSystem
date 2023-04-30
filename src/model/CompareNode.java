@@ -1,6 +1,6 @@
 package model;
 
-public class ComparableNode <K extends Comparable<K>, E> {
+class ComparableNode <K extends Comparable<K>, E> {
 	private K key;
 	private E element;
 

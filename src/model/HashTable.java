@@ -1,92 +1,62 @@
 package model;
-import java.util.ArrayList;
 
+import java.nio.charset.StandardCharsets;
 
-public class HashTable<K extends Comparable<K>, V> implements IHash<K, V> {
-	private int size;
-
-	private final ArrayList<CompareNode<K, V>> bucketArray;
-	CompareNode<K, V> deleted;
-
-	public HashTable(int size) {
-		this.size = 0;
-		bucketArray = new ArrayList<>();
-		deleted = new CompareNode<>(null, null);
-		for (int i = 0; i < size; i++)
-			bucketArray.add(null);
+public class HashTable<T,K> {
+	private final int size = 11;
+	private HNode[] table;
+	public HashTable(){
+		table = new HNode[size];
 	}
-
-	public void insert(K key, V value) throws Exception {
-		if (size() < bucketArray.size()) {
-			for (int i = 0; i < bucketArray.size(); i++) {
-				boolean located = false;
-				int j = hash(key, i);
-				if (bucketArray.get(j) == null) {
-					bucketArray.set(j, new CompareNode<>(key, value));
-					this.size++;
-					located = true;
-				} else if (bucketArray.get(j).getKey().compareTo(key) == 0) {
-					bucketArray.get(j).setElement(value);
-					located = true;
+	private int hash(String k){
+		byte[] bytes = k.getBytes(StandardCharsets.US_ASCII);
+		int n = calculateASCII(bytes);
+		return n % size;
+	}
+	private int calculateASCII(byte[] bytes){
+		int result = 0;
+		for(byte b:bytes){
+			result+=b;
+		}
+		return result;
+	}
+	public void insert(T element, K key){
+		int hash = hash(key.toString());
+		if(table[hash] != null){
+			HNode<T,K> node = new HNode(element,key);
+			table[hash].add(node);
+			table[hash] = node;
+		}else{
+			table[hash] = new HNode(element, key);
+		}
+	}
+	public T search(K key){
+		int hash = hash(key.toString());
+		return search(key,hash);
+	}
+	private T search(K key, int hash){
+		if(table[hash]!=null){
+			HNode<T,K> node = table[hash];
+			while(node!=null){
+				if(node.getKey().equals(key)){
+					return node.getElement();
+				}else{
+					node = node.getNext();
 				}
-				if (located)
-					return;
+			}
+			return null;
+		}else{
+			return null;
+		}
+	}
+	public String printTable(){
+		String msj = "";
+		for(int i=0;i<size;i++){
+			if(table[i]!=null){
+				msj+="\n"+table[i].list();
 			}
 		}
-		throw new Exception("Estas excediendo el tamaño");
-	}
-
-	public V search(K key) {
-		boolean stop = false;
-		for (int i = 0; i < bucketArray.size() && !stop; i++) {
-			int index = hash(key, i);
-			ComparableNode<K, V> node = bucketArray.get(index);
-			if (node == null) {
-				stop = true;
-			} else if (node != deleted && node.getKey().equals(key))
-				return bucketArray.get(index).getElement();
-		}
-		return null;
-	}
-
-	public void delete(K key) {
-		boolean stop = false;
-		for (int i = 0; i < bucketArray.size() && !stop; i++) {
-			int index = hash(key, i);
-			ComparableNode<K, V> node = bucketArray.get(index);
-			if (node == null) {
-				stop = true;
-			} else if (node != deleted && node.getKey().equals(key)) {
-				bucketArray.set(index, deleted);
-				this.size--;
-			}
-		}
-	}
-
-	public String print() {
-		StringBuilder msg = new StringBuilder("[ ");
-		for (ComparableNode<K, V> node : bucketArray) {
-			if (node != null && node != deleted)
-				msg.append(node).append(", ");
-		}
-		return (msg.length() > 2 ? msg.substring(0, msg.length() - 2) : msg.substring(0, msg.length() - 1)) + " ]";
-	}
-
-	private int hash(K key, int i) {
-		return (hash(key) + i) % bucketArray.size();
-	}
-
-	private int hash(K key) {
-		int h = key.hashCode() % bucketArray.size();
-		return (h < 0) ? -h : h;
-	}
-
-	public int size() {
-		return this.size;
-	}
-
-	public boolean isEmpty() {
-		return size() == 0;
+		return msj;
 	}
 
 }

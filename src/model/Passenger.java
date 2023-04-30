@@ -6,11 +6,11 @@ public class Passenger {
     private  int  age;
     private int seat ;
 
-    public Passenger(String name, String id, int age,int seat) {
+    public Passenger(String name, String id, int age) {
         this.name = name;
         this.id = id;
         this.age = age;
-        this.seat=seat;
+        this.seat=0;
     }
     public String getName() {
         return name;
