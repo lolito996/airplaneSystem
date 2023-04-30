@@ -7,12 +7,12 @@ public class Passenger {
     private Seat seat ;
     private PassengerClass type;
 
-    public Passenger(String name, String id, int age) {
+    public Passenger(String name, String id, int age, PassengerClass type) {
         this.name = name;
         this.id = id;
         this.age = age;
         this.seat=null;
-        this.type = PassengerClass.NORMAL_CLASS;
+        this.type = type;
     }
     public String getName() {
         return name;
