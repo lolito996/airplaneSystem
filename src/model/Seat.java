@@ -1,2 +1,4 @@
-package model;public class Seat {
+package model;
+
+public class Seat {
 }
