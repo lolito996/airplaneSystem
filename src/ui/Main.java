@@ -63,8 +63,12 @@ public class Main {
                 print(disboardPlane());
                 break;
             case 5:
+                print("\nV : VIP seat  ||");
                 print(controller.printSeatarirplane());
+                print("\n F : Free seat  ||  O : Occupied seat");
                 print(controller.printSeatwhitPassengers());
+                print("\n Seat Numbers:");
+                print(controller.printSeatNumbers());
                 break;
             case 6:
                 controller.createPassengerList();
@@ -81,6 +85,7 @@ public class Main {
     private void enterPassenger(){
         if(controller.getPlaneState().equals(PlaneState.LANDED)){
             print("\n El avión ya no recibe pasajeros....");
+            return;
         }
 
         print("\n1. Entrar un solo pasajero\n"+"2. Casualmente llegan todos los pasajeros al tiempo\n(Para no undir la otra opción 54 veces)");
@@ -131,7 +136,7 @@ public class Main {
     }
     private String boardPassengers(){
         if(controller.getPlaneState().equals(PlaneState.LANDED)){
-            return "\n El avión ya no recibe pasajeros....";
+            return "\n El avión no está en estado de abordaje";
         }
         controller.setPlaneState();
         String msj = controller.getOrderedPassengers();
@@ -139,9 +144,11 @@ public class Main {
     }
     private String disboardPlane(){
         if(controller.getPlaneState().equals(PlaneState.WAITING)){
-            return "\n El avión aún no ha despegado.";
+            return "\n El avión no está en estado de des-abordo.";
         }
-        return "";
+        String msj = controller.disboardOrder();
+        //String msj = controller.printSeat();
+        return msj;
     }
     public String printMenu(){
         return

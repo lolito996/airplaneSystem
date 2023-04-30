@@ -149,16 +149,16 @@ public class AirPlaneSystem {
         while(!normalQueue.isEmpty()){
             cont++;
             Passenger passenger = normalQueue.dequeue();
-            System.out.println("Boarded"+passenger.getName());
             planeQueue.enqueue(passenger,passenger.getId());
-            msj.append("\n"+cont+" ) "+passenger.getName()+"  ::  "+passenger.getPassengerClass());
+            seats.get(passenger.getSeat().getNumber()-1).setOcupied(true);
+            msj.append("\n"+cont+" ) "+passenger.getName()+"  ::  "+passenger.getPassengerClass()+"  ::  Seat :"+passenger.getSeat().getNumber());
         }
         while(!firstClassQueue.isEmpty()){
             cont++;
             Passenger passenger = firstClassQueue.dequeue();
-            System.out.println("Boarded"+passenger.getName());
             planeQueue.enqueue(passenger,passenger.getId());
-            msj.append("\n"+cont+" ) "+passenger.getName()+"  ::  "+passenger.getPassengerClass());
+            seats.get(passenger.getSeat().getNumber()-1).setOcupied(true);
+            msj.append("\n"+cont+" ) "+passenger.getName()+"  ::  "+passenger.getPassengerClass()+"  ::  Seat :"+passenger.getSeat().getNumber());
         }
         return msj.toString();
     }
@@ -168,6 +168,59 @@ public class AirPlaneSystem {
         }else if(passenger.getPassengerClass().equals(PassengerClass.NORMAL_CLASS)){
             normalQueue.enqueue(passenger,passenger.getId());
         }
+    }
+    public String disboardOrder(){
+        HNode<String,Integer> node = new HNode<>("",-1);
+        StringBuilder msj = new StringBuilder();
+        int cont = 0;
+        boolean flag = true;
+        for(int i=0;i<seats.size();i++){
+            if(flag){;
+                node = reversePrint(i,cont);
+                msj.append(node.getElement());
+                cont = node.getKey();
+                i+=2;
+                flag = false;
+            }else{
+                node = normalPrint(i,cont);
+                msj.append(node.getElement());
+                cont = node.getKey();
+                i+=2;
+                flag = true;
+            }
+        }
+        return msj.toString();
+    }
+    private HNode<String,Integer> reversePrint(int pos, int cont){
+        HNode<String,Integer> node = new HNode<>("",-1);
+        StringBuilder msj = new StringBuilder();
+        Passenger passenger;
+        for(int i=pos+2;i>=pos;i--){
+            passenger = seats.get(i).getPassenger();
+            if(passenger!=null){
+                cont++;
+                msj.append("\n"+(cont)+") "+passenger.getName()+"  ::  "+passenger.getPassengerClass()+"  ::  Seat :"+passenger.getSeat().getNumber());
+            }
+
+        }
+        node.setElement(msj.toString());
+        node.setKey(cont);
+        return node;
+    }
+    private HNode<String,Integer> normalPrint(int pos, int cont){
+        HNode<String,Integer> node = new HNode<>("",-1);
+        StringBuilder msj = new StringBuilder();
+        Passenger passenger;
+        for(int i=pos;i<=pos+2;i++){
+            passenger = seats.get(i).getPassenger();
+            if(passenger!=null){
+                cont++;
+                msj.append("\n"+(cont)+") "+passenger.getName()+"  ::  "+passenger.getPassengerClass()+"  ::  Seat :"+passenger.getSeat().getNumber());
+            }
+        }
+        node.setElement(msj.toString());
+        node.setKey(cont);
+        return node;
     }
     public String printSeatarirplane() {
         int count = 1;
@@ -237,11 +290,50 @@ public class AirPlaneSystem {
             if (cont % 6==0) {
                 msj += "\n";
             }
-            if (seats.get(cont).isOcupied() == true) {
+            if (seats.get(cont).isOcupied()) {
                 msj += "[ O ] ";
             } else {
                 msj += "[ F ] ";
             }
+            if (cont == 14) {
+                msj += "  3   ";
+            }
+            if (cont == 20) {
+                msj += "  4   ";
+            }
+            if (cont == 26) {
+                msj += "  5   ";
+            }
+            if (cont == 32) {
+                msj += "  6   ";
+            }
+            if (cont == 38) {
+                msj += "  7   ";
+            }
+            if (cont == 44) {
+                msj += "  8   ";
+            }
+            if (cont == 50) {
+                msj += "  9   ";
+            }
+            if (cont == 2) {
+                msj += "  1   ";
+            }
+            if (cont == 8) {
+                msj += "  2   ";
+            }
+        }
+        return  msj;
+    }
+    public String printSeatNumbers() {
+        String msj = "";
+
+        for (int cont = 0; cont < totalSeatsVip + totalSeatsNormal; cont++) {
+            if (cont % 6==0) {
+                msj += "\n";
+            }
+            msj += "[ "+seats.get(cont).getNumber()+" ] ";
+
             if (cont == 14) {
                 msj += "  3   ";
             }
@@ -324,7 +416,6 @@ public class AirPlaneSystem {
         passengers.add(new Passenger("Levi White", generateRandomId(), 30, PassengerClass.NORMAL_CLASS));
         passengers.add(new Passenger("Amelia Young", generateRandomId(), 24, PassengerClass.FIRST_CLASS));
         passengers.add(new Passenger("Isaac Wright", generateRandomId(), 21, PassengerClass.NORMAL_CLASS));
-
         saveList();
     }
     //eliminar en el proto final
