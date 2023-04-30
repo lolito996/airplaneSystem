@@ -54,8 +54,7 @@ public class Main {
                 print(controller.printPassengers());
                 break;
             case 2:
-                //print(validationTest());
-                print(passengerValidation());
+                enterPassenger();
                 break;
             case 3:
                 print(boardPassengers());
@@ -64,6 +63,10 @@ public class Main {
                 print(disboardPlane());
                 break;
             case 5:
+                print(controller.printSeatarirplane());
+                print(controller.printSeatwhitPassengers());
+                break;
+            case 6:
                 controller.createPassengerList();
             case 0:
                 System.out.print("Exit program");
@@ -75,8 +78,25 @@ public class Main {
                 break;
         }
     }
+    private void enterPassenger(){
+        if(controller.getPlaneState().equals(PlaneState.LANDED)){
+            print("\n El avión ya no recibe pasajeros....");
+        }
+
+        print("\n1. Entrar un solo pasajero\n"+"2. Casualmente llegan todos los pasajeros al tiempo\n(Para no undir la otra opción 54 veces)");
+        switch(reader.next()){
+            case "1":
+                print(passengerValidation());
+                break;
+            case "2":
+                print(validationTest());
+                break;
+            default:
+                print("invalid option");
+        }
+
+    }
     private String passengerValidation(){
-        if(controller.getPlaneState().equals(PlaneState.LANDED)){return "\n El avión ya no recibe pasajeros....";}
         int pos = controller.passengerComes();
         if(pos==-1){
             return "Lista de llegada de pasajeros Completa";
@@ -88,30 +108,23 @@ public class Main {
                     "    ID : "+passenger.getId());
             print("\n Searching Passenger......");
             if(controller.validatePassenger(passenger,pos)){
-                return "\nPassenger Arrival Registered";
+                return "\nPassenger Arrival Registered\n_______________";
             }else{
-                return "\nPassenger not Found";
+                return "\nPasajero no encontrado";
             }
         }catch(Exception ex){
             ex.printStackTrace();
-            return "Error";
+            return "Error\n_________________";
         }
     }
     private String validationTest(){
         ArrayList<Passenger> list = controller.getPassengers();
         StringBuilder msj = new StringBuilder();
-        System.out.println("Entra a test :"+list.size());
-        int cont = 1;
         while(list.size()>0){
-            System.out.println(cont);
-            cont++;
             print(passengerValidation());
         }
         ArrayList<Passenger> listTemp = controller.getListTemp();
-        cont = 1;
         for(Passenger p:listTemp){
-            System.out.println(cont);
-            cont++;
             msj.append("\n"+p.getName()+" :: "+p.getSeat().getNumber());
         }
         return msj.toString();
@@ -121,7 +134,8 @@ public class Main {
             return "\n El avión ya no recibe pasajeros....";
         }
         controller.setPlaneState();
-        return "";
+        String msj = controller.getOrderedPassengers();
+        return msj;
     }
     private String disboardPlane(){
         if(controller.getPlaneState().equals(PlaneState.WAITING)){
@@ -139,6 +153,7 @@ public class Main {
                         "2. Pasajero se presenta\n"+
                         "3. Avión va a despegar, aborden los pasajeros\n"+
                         "4. Desabordar pasajeros\n"+
+                        "5. Imprimir Avión\n"+
                         "0. Exit";
     }
 

@@ -7,15 +7,22 @@ import java.util.Random;
 
 
 public class AirPlaneSystem {
+    public static final int arrows = 9;
+    public static final int columns = 6;
+    public static final int totalSeatsVip = 18;
+
+    public static final int totalSeatsNormal = 36;
     private File result;
     private PlaneState state;
     private HashTable<Passenger,String> hash;
     private ArrayList<Passenger> passengers;
     private ArrayList<Passenger> listTemp;
+    private ArrayList<Seat> seats;
     private Queue<Passenger,String> normalQueue;
     private Queue<Passenger,String> firstClassQueue;
     private ArrayList<Seat> normalSeats;
     private ArrayList<Seat> firstClassSeats;
+    private Queue<Passenger,String> planeQueue;
 
     public AirPlaneSystem(){
         passengers = new ArrayList<>();
@@ -23,11 +30,13 @@ public class AirPlaneSystem {
         state = PlaneState.WAITING;
         normalQueue = new Queue<>();
         firstClassQueue = new Queue<>();
+        planeQueue = new Queue<>();
         normalSeats = new ArrayList<>();
         firstClassSeats = new ArrayList<>();
+        seats = new ArrayList<>(54);
         createDataFile();
         uploadDataPassenger();
-        System.out.println(passengers.get(10).getName());
+        listTemp = passengers;
         passengerHashLoad();
         setSeatList();
 
@@ -36,7 +45,6 @@ public class AirPlaneSystem {
         return passengers;
     }
     public ArrayList<Passenger> getListTemp(){
-        listTemp = passengers;
        return listTemp;
     }
     public void setPlaneState(){
@@ -69,7 +77,6 @@ public class AirPlaneSystem {
             Passenger[] array = gson.fromJson(msj.toString(),Passenger[].class);
             for(Passenger p:array){
                 passengers.add(p);
-                p.setPassengerClass(PassengerClass.NORMAL_CLASS);
             }
         }catch(Exception ex){
             ex.printStackTrace();
@@ -85,13 +92,15 @@ public class AirPlaneSystem {
         return msj.toString();
     }
     private void setSeatList(){
-        //lista de asientos de clase económica
-        for(int i=19;i<=54;i++){
-            normalSeats.add(new Seat(i,false));
-        }
         //lista de asientos de primera Clase
         for(int i=1;i<=18;i++){
             firstClassSeats.add(new Seat(i,false));
+            seats.add(new Seat(i,false));
+        }
+        //lista de asientos de clase económica
+        for(int i=19;i<=54;i++){
+            normalSeats.add(new Seat(i,false));
+            seats.add(new Seat(i,false));
         }
     }
     private void passengerHashLoad(){
@@ -109,36 +118,159 @@ public class AirPlaneSystem {
     }
     public boolean validatePassenger(Passenger passenger,int pos){
         if(hash.search(passenger.getId())!=null){
-            passengers.remove(pos);
             orderPassenger(passenger);
             setPassengerSeat(passenger,pos);
             return true;
         }else{
             return false;
         }
-
     }
     private void setPassengerSeat(Passenger passenger,int pos){
-        if(passenger.getClass().equals(PassengerClass.FIRST_CLASS)){
+        if(passenger.getPassengerClass().equals(PassengerClass.FIRST_CLASS)){
             int seatPos = (int)Math.floor(Math.random()*(firstClassSeats.size()));
             Seat seat = firstClassSeats.get(seatPos);
             firstClassSeats.remove(seatPos);
             passengers.get(pos).setSeat(seat);
+            seats.get(seat.getNumber()-1).setPassenger(passenger);
+
         }else if(passenger.getPassengerClass().equals(PassengerClass.NORMAL_CLASS)){
             int seatPos = (int)Math.floor(Math.random()*(normalSeats.size()));
             Seat seat = normalSeats.get(seatPos);
             normalSeats.remove(seatPos);
             passengers.get(pos).setSeat(seat);
+            seats.get(seat.getNumber()-1).setPassenger(passenger);
         }
+        passengers.remove(pos);
+    }
+    public String getOrderedPassengers(){
+        StringBuilder msj = new StringBuilder();
+        msj.append("\nOrden de Abordaje :");
+        int cont = 0;
+        while(!normalQueue.isEmpty()){
+            cont++;
+            Passenger passenger = normalQueue.dequeue();
+            System.out.println("Boarded"+passenger.getName());
+            planeQueue.enqueue(passenger,passenger.getId());
+            msj.append("\n"+cont+" ) "+passenger.getName()+"  ::  "+passenger.getPassengerClass());
+        }
+        while(!firstClassQueue.isEmpty()){
+            cont++;
+            Passenger passenger = firstClassQueue.dequeue();
+            System.out.println("Boarded"+passenger.getName());
+            planeQueue.enqueue(passenger,passenger.getId());
+            msj.append("\n"+cont+" ) "+passenger.getName()+"  ::  "+passenger.getPassengerClass());
+        }
+        return msj.toString();
     }
     private void orderPassenger(Passenger passenger){
-        if(passenger.getClass().equals(PassengerClass.FIRST_CLASS)){
+        if(passenger.getPassengerClass().equals(PassengerClass.FIRST_CLASS)){
             firstClassQueue.enqueue(passenger,passenger.getId());
         }else if(passenger.getPassengerClass().equals(PassengerClass.NORMAL_CLASS)){
             normalQueue.enqueue(passenger,passenger.getId());
-        }else{
+        }
+    }
+    public String printSeatarirplane() {
+        int count = 1;
+        String msj="";
+        for (int countSeatVip = 1; countSeatVip <= totalSeatsVip; countSeatVip++) {
+
+            msj += "[ V ] ";
+
+            if (count == 6 || count == 12 || count ==18) {
+                msj += "  \n";
+            }
+            if (count == 3) {
+                msj += "  1   ";
+            }
+            if (count == 9) {
+                msj += "  2   ";
+            }
+            if (count ==15){
+                msj+= "  3   ";
+            }
+            count++;
+        }
+
+        for (int countSeatNormal = 1; countSeatNormal <= totalSeatsNormal; countSeatNormal++) {
+
+            msj += "[ T ] ";
+
+            if (count == 30 || count == 36 || count == 42 || count == 48 || count == 54) {
+                msj += " \n";
+            }
+            if (count == 18 || count == 24) {
+                msj += "\n";
+            }
+            if (count == 15) {
+                msj += "  3   ";
+            }
+            if (count == 21) {
+                msj += "  4   ";
+            }
+            if (count == 27) {
+                msj += "  5   ";
+            }
+            if (count == 33) {
+                msj += "  6   ";
+            }
+            if (count == 39) {
+                msj += "  7   ";
+            }
+            if (count == 45) {
+                msj += "  8   ";
+            }
+            if (count == 51) {
+                msj += "  9   ";
+            }
+
+            count++;
 
         }
+
+        return msj;
+
+    }
+    public String printSeatwhitPassengers() {
+        String msj = "";
+
+        for (int cont = 0; cont < totalSeatsVip + totalSeatsNormal; cont++) {
+            if (cont % 6==0) {
+                msj += "\n";
+            }
+            if (seats.get(cont).isOcupied() == true) {
+                msj += "[ O ] ";
+            } else {
+                msj += "[ F ] ";
+            }
+            if (cont == 14) {
+                msj += "  3   ";
+            }
+            if (cont == 20) {
+                msj += "  4   ";
+            }
+            if (cont == 26) {
+                msj += "  5   ";
+            }
+            if (cont == 32) {
+                msj += "  6   ";
+            }
+            if (cont == 38) {
+                msj += "  7   ";
+            }
+            if (cont == 44) {
+                msj += "  8   ";
+            }
+            if (cont == 50) {
+                msj += "  9   ";
+            }
+            if (cont == 2) {
+                msj += "  1   ";
+            }
+            if (cont == 8) {
+                msj += "  2   ";
+            }
+        }
+        return  msj;
     }
     //Este metodo se eliminara para el prototipo final
     public void createPassengerList() throws IOException {
