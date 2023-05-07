@@ -103,6 +103,10 @@ public class Main {
 
     }
     private void endProgram(){
+        if(controller.getPlaneState().equals(PlaneState.WAITING)){
+            print("\n El avión no ha llegadon al destino....");
+            return;
+        }
         print("\n El Vuelo ha llegado a su destino"+"\n\nGracias Por usar nuestro Confiable Programa");
         System.exit(0);
     }
